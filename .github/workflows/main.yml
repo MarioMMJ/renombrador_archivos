@@ -45,6 +45,7 @@ jobs:
       - name: Build DMG
         run: |
           python setup.py py2app
+          ls dist/
           hdiutil create renombrar.dmg -volname "Renombrar Archivos" -srcfolder dist/renombrar.app
 
       - name: Upload DMG Artifact
