@@ -22,8 +22,8 @@ Renombrador de Archivos es una herramienta GUI basada en Python que permite a lo
 
 Puedes encontrar el archivo ejecutable para Windows y Mac en la sección de releases de este repositorio.
 
-- [Descargar para Windows](https://github.com/MarioMMJ/renombrador_archivos/releases/latest)
-- [Descargar para Mac](https://github.com/MarioMMJ/renombrador_archivos/releases/latest)
+- [Descargar para Windows](https://github.com/MarioMMJ/renombrador_archivos/releases/download/v1.0.0/windows.zip)
+- [Descargar para Mac](https://github.com/MarioMMJ/renombrador_archivos/releases/download/v1.0.0/macos.zip)
 
 
 
