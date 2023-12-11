@@ -60,19 +60,13 @@ jobs:
     steps:
       - name: Check out code
         uses: actions/checkout@v2
-
-      - name: Set up Git
-        run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
-
       - name: Create Tag
-        id: tag
-        run: |
-          TAG_NAME=$(date +v%Y%m%d-%H%M%S)
-          git tag $TAG_NAME
-          echo "::set-output name=tag_name::$TAG_NAME"
-          git push --tags
+        - uses: rickstaa/action-create-tag@v1
+          id: "tag_create"
+          with:
+            tag: "latest"
+            tag_exists_error: false
+            message: "Latest release"
 
       - name: Download Artifacts
         uses: actions/download-artifact@v2
