@@ -1,0 +1,92 @@
+name: Build and Release
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.8' 
+      - name: Build EXE
+        run: |
+          pip install pyinstaller
+          pyinstaller --onefile renombrar.py
+
+      - name: Upload EXE Artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: windows-executable
+          path: dist/renombrar.exe
+
+  build-mac:
+    runs-on: macos-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.8' 
+
+      - name: Install dependencies
+        run: |
+          pip install py2app
+
+      - name: Build DMG
+        run: |
+          python setup.py py2app
+          hdiutil create renombrar.dmg -volname "Renombrar Archivos" -srcfolder dist/renombrar.app
+
+      - name: Upload DMG Artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: macos-diskimage
+          path: renombrar.dmg
+
+  release:
+    needs: [build-windows, build-mac]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download Artifacts
+        uses: actions/download-artifact@v2
+
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          draft: false
+          prerelease: false
+
+      - name: Upload EXE to Release
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./windows-executable/renombrar.exe
+          asset_name: renombrar.exe
+          asset_content_type: application/octet-stream
+
+      - name: Upload DMG to Release
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./macos-diskimage/renombrar.dmg
+          asset_name: renombrar.dmg
+          asset_content_type: application/octet-stream
