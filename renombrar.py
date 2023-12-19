@@ -28,7 +28,12 @@ def ejecutar_renombrado():
 
     if messagebox.askokcancel("Confirmación", "¿Estás seguro de que quieres renombrar todos los archivos en esta carpeta?"):
         palabras_clave = entrada_texto.get('1.0', 'end-1c').split(';')
-        renombrar_archivos(palabras_clave)
+        palabras_clave_limpias = []
+        for palabra in palabras_clave:
+            # Remover caracteres no permitidos y espacios extra
+            palabra_limpia = re.sub(r'[<>:"/\\|?*\n\r\t]', '', palabra).strip()
+            palabras_clave_limpias.append(palabra_limpia)
+        renombrar_archivos(palabras_clave_limpias)
         messagebox.showinfo("Éxito", "Archivos renombrados correctamente.")
 
 def renombrar_archivos(palabras_clave):
